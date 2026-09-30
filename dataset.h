@@ -13,6 +13,8 @@ class Dataset{
 
     public:
 
+        Dataset(string);
+
         void setDataset(string);
         void printDataset();
 };

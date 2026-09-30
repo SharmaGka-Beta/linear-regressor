@@ -14,6 +14,10 @@ class Dataset{
     
     public:
 
+        Dataset(string fileName){
+            setDataset(fileName);
+        }
+
         void setDataset(string fileName){
 
             ifstream file(fileName);
