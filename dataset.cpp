@@ -56,12 +56,3 @@ class Dataset{
             cout << endl;
         }
 };
-
-int main(){
-
-    Dataset data;
-
-    data.setDataset("data.csv");
-    data.printDataset();
-    return 0;
-}
