@@ -46,7 +46,7 @@ class Dataset{
             file.close();
         }
 
-        void printDataset(){
+        void printDataset() const{
 
             int sz = dataset.size();
             for(int i = 0; i < sz; i++){
