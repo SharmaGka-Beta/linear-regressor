@@ -32,4 +32,25 @@ class Model{
             weights = newWeights;
             bias = newBias;
         }
+
+        vector <double> getWeightGrad(vector <double>& lossGradients, vector<vector<double>>& inputs){
+
+            vector <double> weightGrads((int)weights.size(), 0.0);
+
+            for(int i = 0; i < (int)lossGradients.size(); i++){
+                for (int j = 0; j < (int)weights.size(); j++) {        
+                    weightGrads[j] += lossGradients[i] * inputs[i][j];
+                }
+            }
+            return weightGrads;
+        }
+
+        double getBiasGrad(vector<double>& lossGradients){
+
+            double biasGrad = 0.0;
+            for (double i : lossGradients){
+                biasGrad += i;
+            }
+            return biasGrad;
+        }
 };

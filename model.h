@@ -16,4 +16,7 @@ class Model{
         Model(size_t size);
         vector <double> predict(vector<vector<double>>&);
         void setParams(vector<double>&, double);
+
+        vector <double> getWeightGrad(vector <double>&, vector<vector<double>>&);
+        double getBiasGrad(vector<double>& lossGradients);
 };
