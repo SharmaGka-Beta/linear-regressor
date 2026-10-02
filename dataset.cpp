@@ -12,12 +12,12 @@ class Dataset{
 
     private:
 
-        vector<vector<string>> dataset;
+        vector<vector<double>> dataset;
         vector<string> headers;
 
-        bool hasHeaders(string filename){
+        bool hasHeaders(string fileName){
 
-            ifstream file(filename);
+            ifstream file(fileName);
 
             if (!file.is_open()){
                 throw CustomException("File could not be opened!");
@@ -61,16 +61,26 @@ class Dataset{
             }
 
             string line;
+            if(hasHeaders(fileName)){
+                getline(file, line);
+                stringstream lineStream(line);
+
+                string value;
+
+                while(getline(lineStream, value, ',')){
+                    headers.push_back(value);
+                }
+            }
 
             while(getline(file, line)){
 
                 stringstream lineStream(line);
                 string value;
 
-                vector <string> row;
+                vector <double> row;
 
                 while(getline(lineStream, value, ',')){
-                    row.push_back(value);
+                    row.push_back(stod(value));
                 }
 
                 dataset.push_back(row);
