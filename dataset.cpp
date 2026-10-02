@@ -4,6 +4,8 @@
 #include <iostream>
 #include <sstream>
 
+#include "exceptions.h"
+
 using namespace std;
 
 class Dataset{
@@ -23,8 +25,7 @@ class Dataset{
             ifstream file(fileName);
 
             if (!file.is_open()){
-                cout << "Could not open file!";
-                return;
+                throw CustomException("File could not be opened!");
             }
 
             string line;
