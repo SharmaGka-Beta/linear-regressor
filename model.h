@@ -21,5 +21,5 @@ class Model{
         double getBias();
 
         vector <double> getWeightGrad(vector <double>&, vector<vector<double>>&);
-        double getBiasGrad(vector<double>& lossGradients);
+        double getBiasGrad(vector<double>&);
 };
