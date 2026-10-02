@@ -13,6 +13,7 @@ class Dataset{
         vector <string> headers;
 
         bool hasHeaders(string);
+        int getTargetIndex(string name);
 
     public:
 

@@ -45,6 +45,16 @@ class Dataset{
                 return true;
             }
         }
+
+        int getTargetIndex(string name){
+            for(int i = 0; i < (int)headers.size(); i++){
+                if (headers[i] == name){
+                    return i;
+                }
+            }
+
+            return (int)dataset[0].size() - 1;
+        }
     
     public:
 
@@ -101,5 +111,35 @@ class Dataset{
                 cout << endl;
             }
             cout << endl;
+        }
+
+        vector<vector<double>> getFeatures(string name){
+            int targetIndex = getTargetIndex(name);
+
+            vector<vector<double>>X;
+
+            for(auto& row: dataset){
+                vector<double> temp;
+                for(int i = 0; i < (int)row.size(); i++){
+                    if (i != targetIndex){
+                        temp.push_back(row[i]);
+                    }
+                }
+                X.push_back(temp);
+            }
+
+            return X;
+        }
+
+        vector <double> getTargets(string name){
+            int targetIndex = getTargetIndex(name);
+
+            vector <double> Y;
+
+            for(auto& row: dataset){
+                Y.push_back(row[targetIndex]);
+            }
+
+            return Y;
         }
 };
