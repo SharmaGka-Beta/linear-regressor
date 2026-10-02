@@ -1,4 +1,7 @@
 #include "model.h"
+#include <vector>
+
+using namespace std;
 
 class Optimizer{
     public:
@@ -17,5 +20,12 @@ class SGDOptimizer : public Optimizer{
 
         void update(Model& model, vector<double>& weightGrads, double biasGrad){
 
+            vector<double> weights = model.getWeights();
+
+            for(int i = 0; i < (int)weightGrads.size(); i++){
+                weights[i] -= learningRate*weightGrads[i];
+            }
+            double bias = model.getBias() - learningRate*biasGrad;
+            model.setParams(weights, bias);
         }
 };
