@@ -13,6 +13,38 @@ class Dataset{
     private:
 
         vector<vector<string>> dataset;
+        vector<string> headers;
+
+        bool hasHeaders(string filename){
+
+            ifstream file(filename);
+
+            if (!file.is_open()){
+                throw CustomException("File could not be opened!");
+            }
+
+            string line;
+            getline(file, line);
+            stringstream lineStream(line);
+            string value;
+
+            vector <string> row; 
+            while(getline(lineStream, value, ',')){
+                row.push_back(value);
+            }
+
+            file.close();
+
+            try{
+                for(string i: row){
+                    stod(i);
+                }
+                return false;
+            }
+            catch(...){
+                return true;
+            }
+        }
     
     public:
 

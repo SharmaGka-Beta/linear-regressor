@@ -10,6 +10,9 @@ class Dataset{
     private:
 
         vector<vector<string>> dataset;
+        vector <string> headers;
+
+        bool hasHeaders(string);
 
     public:
 
