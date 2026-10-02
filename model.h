@@ -14,6 +14,6 @@ class Model{
     public:
 
         Model(size_t size);
-        vector <double> predict(vector<vector<double>>);
-        void setParams(vector<double>, double);
+        vector <double> predict(vector<vector<double>>&);
+        void setParams(vector<double>&, double);
 };

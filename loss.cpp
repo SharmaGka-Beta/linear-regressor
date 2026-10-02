@@ -5,13 +5,13 @@ using namespace std;
 class LossFunction{
 
     public:
-        virtual double computeLoss(vector <double>, vector <double>) = 0; 
+        virtual double computeLoss(vector <double>&, vector <double>&) = 0; 
 };
 
 class MSELoss : virtual public LossFunction{
 
     public:
-        virtual double computeLoss(vector <double> predictions, vector <double> actual) override{
+        virtual double computeLoss(vector <double>& predictions, vector <double>& actual) override{
 
             double loss = 0;
             int sz = predictions.size();

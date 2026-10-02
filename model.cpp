@@ -13,7 +13,7 @@ class Model{
 
         Model(size_t size) : weights(size, 0.0), bias(0.0){}
 
-        vector <double> predict(vector<vector<double>> inputs){
+        vector <double> predict(vector<vector<double>>& inputs){
 
             vector <double> predictions;
 
@@ -28,7 +28,7 @@ class Model{
             return predictions;
         }
 
-        void setParams(vector<double>newWeights, double newBias){
+        void setParams(vector<double>& newWeights, double newBias){
             weights = newWeights;
             bias = newBias;
         }
