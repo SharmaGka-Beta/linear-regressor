@@ -18,5 +18,7 @@ class Scaler{
 
         vector<vector<double>> transform(vector<vector<double>>&);
         vector<double> transform(vector<double>&);
+
+        vector<double> invert(vector<double>&);
 };
 

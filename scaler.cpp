@@ -101,4 +101,15 @@ class Scaler{
             }
             return temp;
         }
+
+        vector<double> invert(vector<double>& scaled){
+            if(!fitted){
+                throw CustomException("Fit before inverting!");
+            }
+            vector<double> temp;
+            for(auto i: scaled){
+                temp.push_back(i * sigma[0] + mean[0]);
+            }
+            return temp;
+        }
 };
