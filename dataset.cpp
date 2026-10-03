@@ -5,150 +5,144 @@
 #include <sstream>
 
 #include "exceptions.h"
+#include "dataset.h"
 
 using namespace std;
 
-class Dataset{
 
-    private:
+bool Dataset::hasHeaders(string fileName){
 
-        vector<vector<double>> dataset;
-        vector<string> headers;
+    ifstream file(fileName);
 
-        bool hasHeaders(string fileName){
+    if (!file.is_open()){
+        throw CustomException("File could not be opened!");
+    }
 
-            ifstream file(fileName);
+    string line;
+    getline(file, line);
+    stringstream lineStream(line);
+    string value;
 
-            if (!file.is_open()){
-                throw CustomException("File could not be opened!");
-            }
+    vector <string> row; 
+    while(getline(lineStream, value, ',')){
+        row.push_back(value);
+    }
 
-            string line;
-            getline(file, line);
-            stringstream lineStream(line);
-            string value;
+    file.close();
 
-            vector <string> row; 
-            while(getline(lineStream, value, ',')){
-                row.push_back(value);
-            }
+    try{
+        for(string i: row){
+            stod(i);
+        }
+        return false;
+    }
+    catch(...){
+        return true;
+    }
+}
 
-            file.close();
+int Dataset::getTargetIndex(string name){
+    for(int i = 0; i < (int)headers.size(); i++){
+        if (headers[i] == name){
+            return i;
+        }
+    }
 
-            try{
-                for(string i: row){
-                    stod(i);
-                }
-                return false;
-            }
-            catch(...){
-                return true;
-            }
+    return (int)dataset[0].size() - 1;
+}
+
+
+Dataset::Dataset(string fileName){
+    setDataset(fileName);
+}
+
+void Dataset::setDataset(string fileName){
+
+    ifstream file(fileName);
+
+    if (!file.is_open()){
+        throw CustomException("File could not be opened!");
+    }
+
+    string line;
+    if(hasHeaders(fileName)){
+        getline(file, line);
+        stringstream lineStream(line);
+
+        string value;
+
+        while(getline(lineStream, value, ',')){
+            headers.push_back(value);
+        }
+    }
+
+    while(getline(file, line)){
+
+        if(line.empty()){
+            continue;
         }
 
-        int getTargetIndex(string name){
-            for(int i = 0; i < (int)headers.size(); i++){
-                if (headers[i] == name){
-                    return i;
-                }
-            }
+        stringstream lineStream(line);
+        string value;
 
-            return (int)dataset[0].size() - 1;
-        }
-    
-    public:
+        vector <double> row;
 
-        Dataset(string fileName){
-            setDataset(fileName);
+        while(getline(lineStream, value, ',')){
+            row.push_back(stod(value));
         }
 
-        void setDataset(string fileName){
+        dataset.push_back(row);
+    }
 
-            ifstream file(fileName);
+    file.close();
+}
 
-            if (!file.is_open()){
-                throw CustomException("File could not be opened!");
-            }
+void Dataset::printDataset(){
 
-            string line;
-            if(hasHeaders(fileName)){
-                getline(file, line);
-                stringstream lineStream(line);
+    int sz = dataset.size();
 
-                string value;
+    for(int i = 0; i < (int)headers.size(); i++){
+        cout << headers[i] << " ";
+    }
+    cout << endl;
+    for(int i = 0; i < sz; i++){
+        int rowSize = dataset[i].size();
+        for(int j = 0; j < rowSize; j++){
 
-                while(getline(lineStream, value, ',')){
-                    headers.push_back(value);
-                }
-            }
-
-            while(getline(file, line)){
-
-                if(line.empty()){
-                    continue;
-                }
-
-                stringstream lineStream(line);
-                string value;
-
-                vector <double> row;
-
-                while(getline(lineStream, value, ',')){
-                    row.push_back(stod(value));
-                }
-
-                dataset.push_back(row);
-            }
-
-            file.close();
+            cout << dataset[i][j] << " ";
         }
+        cout << endl;
+    }
+    cout << endl;
+}
 
-        void printDataset() const{
+vector<vector<double>> Dataset::getFeatures(string name){
+    int targetIndex = getTargetIndex(name);
 
-            int sz = dataset.size();
+    vector<vector<double>>X;
 
-            for(int i = 0; i < (int)headers.size(); i++){
-                cout << headers[i] << " ";
+    for(auto& row: dataset){
+        vector<double> temp;
+        for(int i = 0; i < (int)row.size(); i++){
+            if (i != targetIndex){
+                temp.push_back(row[i]);
             }
-            cout << endl;
-            for(int i = 0; i < sz; i++){
-                int rowSize = dataset[i].size();
-                for(int j = 0; j < rowSize; j++){
-
-                    cout << dataset[i][j] << " ";
-                }
-                cout << endl;
-            }
-            cout << endl;
         }
+        X.push_back(temp);
+    }
 
-        vector<vector<double>> getFeatures(string name){
-            int targetIndex = getTargetIndex(name);
+    return X;
+}
 
-            vector<vector<double>>X;
+vector <double> Dataset::getTargets(string name){
+    int targetIndex = getTargetIndex(name);
 
-            for(auto& row: dataset){
-                vector<double> temp;
-                for(int i = 0; i < (int)row.size(); i++){
-                    if (i != targetIndex){
-                        temp.push_back(row[i]);
-                    }
-                }
-                X.push_back(temp);
-            }
+    vector <double> Y;
 
-            return X;
-        }
+    for(auto& row: dataset){
+        Y.push_back(row[targetIndex]);
+    }
 
-        vector <double> getTargets(string name){
-            int targetIndex = getTargetIndex(name);
+    return Y;
+}
 
-            vector <double> Y;
-
-            for(auto& row: dataset){
-                Y.push_back(row[targetIndex]);
-            }
-
-            return Y;
-        }
-};
