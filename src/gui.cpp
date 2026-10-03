@@ -1,3 +1,5 @@
-class Gui{
-    
-};
+#include "gui.h"
+
+void Gui::run(){
+
+}
