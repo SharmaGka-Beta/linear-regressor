@@ -1,8 +1,8 @@
+#include "scaler.h"
+#include "exceptions.h"
+
 #include <vector>
 #include <cmath>
-
-#include "exceptions.h"
-#include "scaler.h"
 
 using namespace std;
 

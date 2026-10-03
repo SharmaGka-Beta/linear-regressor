@@ -1,11 +1,11 @@
+#include "dataset.h"
+#include "exceptions.h"
+
+#include <iostream>
 #include <vector>
 #include <string>
 #include <fstream>
-#include <iostream>
 #include <sstream>
-
-#include "exceptions.h"
-#include "dataset.h"
 
 using namespace std;
 

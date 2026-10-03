@@ -1,7 +1,7 @@
 #include "model.h"
-#include <vector>
-
 #include "optimizer.h"
+
+#include <vector>
 
 using namespace std;
 

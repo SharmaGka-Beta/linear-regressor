@@ -2,6 +2,8 @@
 
 #include "model.h"
 
+#include <vector>
+
 class Optimizer{
     public:
         virtual void update(Model&, vector<double>&, double) = 0;

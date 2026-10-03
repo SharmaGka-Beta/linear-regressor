@@ -1,9 +1,9 @@
+#include "trainer.h"
+#include "model.h"
+#include "optimizer.h"
+#include "loss.h"
 #include "dataset.h"
 #include "scaler.h"
-#include "model.h"
-#include "loss.h"
-#include "optimizer.h"
-#include "trainer.h"
 
 #include <vector>
 #include <iostream>

@@ -1,6 +1,8 @@
+#pragma once
+
 #include "model.h"
-#include "loss.h"
 #include "optimizer.h"
+#include "loss.h"
 
 #include <vector>
 

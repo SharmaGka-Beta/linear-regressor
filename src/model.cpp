@@ -1,10 +1,9 @@
-#include <vector>
+#include "model.h"
 #include "matrix.h"
 
-#include "model.h"
+#include <vector>
 
 using namespace std;
-
 
 Model::Model(size_t size) : weights(size, 0.0), bias(0.0){}
 

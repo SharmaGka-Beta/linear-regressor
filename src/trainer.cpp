@@ -1,13 +1,13 @@
-#include "model.h"
-#include "loss.h"
-#include "optimizer.h"
 #include "trainer.h"
+#include "model.h"
+#include "optimizer.h"
+#include "loss.h"
 
+#include <iostream>
 #include <vector>
 #include <numeric>
 #include <random>
 #include <algorithm>
-#include <iostream>
 
 using namespace std;
 
