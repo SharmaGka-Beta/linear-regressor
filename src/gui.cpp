@@ -6,6 +6,7 @@
 #include <imgui.h>
 #include <imgui-SFML.h>
 #include <implot.h>
+#include <ImGuiFileDialog.h>
 
 void Gui::run(){
     sf::RenderWindow window(sf::VideoMode({1200, 800}), "SFML - Linear Regressor");

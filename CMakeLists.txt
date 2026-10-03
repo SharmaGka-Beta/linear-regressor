@@ -58,6 +58,16 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(ImPlot)
 
+FetchContent_Declare(
+    ImGuiFileDialog
+    GIT_REPOSITORY https://github.com/aiekick/ImGuiFileDialog.git
+    GIT_TAG master
+    GIT_SHALLOW ON
+    EXCLUDE_FROM_ALL
+)
+
+FetchContent_MakeAvailable(ImGuiFileDialog)
+
 add_executable(LinearRegressor
                         src/main.cpp
                         src/gui.cpp
@@ -74,12 +84,14 @@ target_include_directories(LinearRegressor
                             PRIVATE
                                 include
                                 ${IMGUI_DIR}
-                                ${implot_SOURCE_DIR}) 
+                                ${implot_SOURCE_DIR}
+                                ${imguifiledialog_SOURCE_DIR}) 
                                 
 target_sources(LinearRegressor
                 PRIVATE
                     ${implot_SOURCE_DIR}/implot.cpp
-                    ${implot_SOURCE_DIR}/implot_items.cpp)
+                    ${implot_SOURCE_DIR}/implot_items.cpp
+                    ${imguifiledialog_SOURCE_DIR}/ImGuiFileDialog.cpp)
                                 
 target_link_libraries(LinearRegressor
                             PRIVATE
