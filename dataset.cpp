@@ -84,6 +84,10 @@ class Dataset{
 
             while(getline(file, line)){
 
+                if(line.empty()){
+                    continue;
+                }
+
                 stringstream lineStream(line);
                 string value;
 
@@ -102,6 +106,11 @@ class Dataset{
         void printDataset() const{
 
             int sz = dataset.size();
+
+            for(int i = 0; i < (int)headers.size(); i++){
+                cout << headers[i] << " ";
+            }
+            cout << endl;
             for(int i = 0; i < sz; i++){
                 int rowSize = dataset[i].size();
                 for(int j = 0; j < rowSize; j++){
