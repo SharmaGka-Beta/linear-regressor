@@ -21,24 +21,28 @@ void Trainer::train(vector<vector<double>>& X, vector<double>& Y, int epochs){
     mt19937 rng(42);
 
     for(int epoch = 0; epoch < epochs; epoch++){
-        shuffle(order.begin(), order.end(), rng);
-
-        for(int i: order){
-            vector<vector<double>> xi = {X[i]};
-            vector<double> yi = {Y[i]};
-            
-            vector <double> predicted = model.predict(xi);
-            vector <double> lossGradient = lossFunction.computeGradient(predicted, yi);
-            vector <double> weightGrads = model.getWeightGrad(lossGradient, xi);
-            double biasGrad = model.getBiasGrad(lossGradient);
-
-            optimizer.update(model, weightGrads, biasGrad);
-        }
-
-        vector <double> pred = model.predict(X);
-        double loss = lossFunction.computeLoss(pred, Y);
-        cout << "Epoch: " << epoch << "    " << "Loss: " << loss << endl;
+        double loss = oneEpoch(order, rng, X, Y, epoch);
     }
+}
+
+double Trainer::oneEpoch(vector<int>& order, mt19937 rng, vector<vector<double>>& X, vector<double>& Y, int epoch){
+    shuffle(order.begin(), order.end(), rng);
+
+    for(int i: order){
+        vector<vector<double>> xi = {X[i]};
+        vector<double> yi = {Y[i]};
+        
+        vector <double> predicted = model.predict(xi);
+        vector <double> lossGradient = lossFunction.computeGradient(predicted, yi);
+        vector <double> weightGrads = model.getWeightGrad(lossGradient, xi);
+        double biasGrad = model.getBiasGrad(lossGradient);
+
+        optimizer.update(model, weightGrads, biasGrad);
+    }
+
+    vector <double> pred = model.predict(X);
+    double loss = lossFunction.computeLoss(pred, Y);
+    return loss;
 }
 
 

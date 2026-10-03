@@ -5,6 +5,7 @@
 #include "loss.h"
 
 #include <vector>
+#include <random>
 
 using namespace std;
 
@@ -20,5 +21,6 @@ class Trainer{
         Trainer(Model&, LossFunction&, Optimizer&);
 
         void train(vector<vector<double>>&, vector<double>&, int);
+        double oneEpoch(vector<int>&, mt19937, vector<vector<double>>&, vector<double>&, int);
 
 };
