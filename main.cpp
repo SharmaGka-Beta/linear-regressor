@@ -37,7 +37,7 @@ int main(){
     vector<vector<double>> newInput = {{area}};
     vector<vector<double>> newScaled = xScaler.transform(newInput);
 
-    vector<double> scaledPred = model.predict(newScaled);   // vector of 1
+    vector<double> scaledPred = model.predict(newScaled);
     vector<double> realPred   = yScaler.invert(scaledPred);
 
     cout << "Predicted price for " << area << ": " << realPred[0] << "\n";
