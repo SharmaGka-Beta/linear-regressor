@@ -16,16 +16,23 @@ Trainer::Trainer(Model& m, LossFunction& lf, Optimizer& o) : model(m), lossFunct
 
 void Trainer::train(vector<vector<double>>& X, vector<double>& Y, int epochs){
     
-    vector<int> order((int)X.size());
-    iota(order.begin(), order.end(), 0);
-    mt19937 rng(42);
-
     for(int epoch = 0; epoch < epochs; epoch++){
-        double loss = oneEpoch(order, rng, X, Y, epoch);
+        double loss = trainOneEpoch(X, Y);
     }
 }
 
-double Trainer::oneEpoch(vector<int>& order, mt19937 rng, vector<vector<double>>& X, vector<double>& Y, int epoch){
+double Trainer::trainOneEpoch(vector<vector<double>>& X, vector<double>& Y){
+
+    vector<int> order(X.size());
+
+    iota(order.begin(), order.end(), 0);
+
+    static mt19937 rng(42);
+
+    return oneEpoch(order, rng, X, Y);
+}
+
+double Trainer::oneEpoch(vector<int>& order, mt19937& rng, vector<vector<double>>& X, vector<double>& Y){
     shuffle(order.begin(), order.end(), rng);
 
     for(int i: order){

@@ -21,6 +21,7 @@ class Trainer{
         Trainer(Model&, LossFunction&, Optimizer&);
 
         void train(vector<vector<double>>&, vector<double>&, int);
-        double oneEpoch(vector<int>&, mt19937, vector<vector<double>>&, vector<double>&, int);
+        double trainOneEpoch(vector<vector<double>>&, vector<double>&);
+        double oneEpoch(vector<int>&, mt19937&, vector<vector<double>>&, vector<double>&);
 
 };

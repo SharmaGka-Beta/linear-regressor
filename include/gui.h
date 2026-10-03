@@ -28,11 +28,16 @@ class Gui{
         int state = GuiState::FileLoading;
         string fileName;
         int targetColumn = 0;
+        int currentEpoch = 0;
+        double currentLoss = 0;
+        int epochs = 100;
+        double learningRate = 0.01;
 
         vector<vector<double>> X;
         vector<double> Y;
         vector<vector<double>> scaledX;
         vector<double> scaledY;
+        vector <double> plotX;
 
         unique_ptr<Dataset> dataset;
         unique_ptr<Scaler> scalerX;
@@ -46,7 +51,7 @@ class Gui{
         void loadFile();
         void selectTarget();
         void ready();
-        void train();
+        void training();
 
 
     public:

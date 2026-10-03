@@ -63,6 +63,9 @@ void Gui::renderState(){
     else if(state == GuiState::Ready){
         ready();
     }
+    else if(state == GuiState::Training){
+        training();
+    }
 }
 
 void Gui::loadFile(){
@@ -103,6 +106,9 @@ void Gui::loadFile(){
                 targetColumn = dataset -> getColumnCount() - 1;
                 X = dataset -> getFeatures(targetColumn);
                 Y = dataset -> getTargets(targetColumn);
+                for(auto const& row: X){
+                    plotX.push_back(row[0]);
+                }
                 state = GuiState::Ready;
             }
         }
@@ -136,6 +142,9 @@ void Gui::selectTarget(){
     if(ImGui::Button("Ok")){
         X = dataset -> getFeatures(targetColumn);
         Y = dataset -> getTargets(targetColumn);
+        for(auto const& row: X){
+            plotX.push_back(row[0]);
+        }
         state = GuiState::Ready;
     }
     ImGui::End();
@@ -145,18 +154,24 @@ void Gui::ready(){
 
     ImGui::Begin("Ready");
 
+    ImGui::InputInt("Epochs", &epochs);
+    ImGui::InputDouble("Learning Rate", &learningRate);
+
     if(ImGui::Button("Start Training")){
 
         scalerX = make_unique<Scaler>();
         scalerY = make_unique<Scaler>();
         model = make_unique<Model>((int)X[0].size());
         loss = make_unique<MSELoss>();
-        optimizer = make_unique<SGDOptimizer>(0.01);
+        optimizer = make_unique<SGDOptimizer>(learningRate);
         trainer = make_unique<Trainer>(*model, *loss, *optimizer);
 
 
         scalerX -> fit(X);
         scalerY -> fit(Y);
+
+        currentEpoch = 0;
+        currentLoss = 0;
 
         scaledX = scalerX -> transform(X);
         scaledY = scalerY -> transform(Y);
@@ -165,15 +180,11 @@ void Gui::ready(){
     }
 
     if(dataset -> getColumnCount() == 2){
-        vector <double> plot;
-        for(auto const& row: X){
-            plot.push_back(row[0]);
-        }
 
         if (ImPlot::BeginPlot("Dataset")){
             ImPlot::PlotScatter(
                 "Data",
-                plot.data(),
+                plotX.data(),
                 Y.data(),
                 static_cast<int>(Y.size())
             );
@@ -182,13 +193,57 @@ void Gui::ready(){
         }
     }
     else{
-        ImGui::Text("Plot availible only for 2D regression :(");
+        ImGui::Text("Plot available only for 2D regression :(");
     }
     ImGui::End();
 }
 
-void Gui::train(){
+void Gui::training(){
 
     ImGui::Begin("Training");
 
+    if (currentEpoch < epochs){
+
+        currentLoss = trainer -> trainOneEpoch(scaledX, scaledY);
+        currentEpoch++;
+    }
+
+    ImGui::Text("Epoch: %d / %d", currentEpoch, epochs);
+    ImGui::Text("Loss: %.6f", currentLoss);
+
+    vector <double> predictions = model -> predict(scaledX);
+    vector <double> real = scalerY -> invert(predictions);
+
+    if (dataset -> getColumnCount() == 2)
+    {
+        if (ImPlot::BeginPlot("Regression")){
+
+            ImPlot::PlotScatter(
+                "Data",
+                plotX.data(),
+                Y.data(),
+                static_cast<int>(plotX.size())
+            );
+
+            ImPlot::PlotLine(
+                "Regression",
+                plotX.data(),
+                real.data(),
+                static_cast<int>(plotX.size())
+            );
+            
+
+            ImPlot::EndPlot();
+        }
+    }
+    else{
+        ImGui::Text("Plot available only for 2D regression :(");
+    }
+
+    ImGui::End();
+
+    if(currentEpoch >= epochs){
+        state = GuiState::Prediction;
+    }
 }
+
