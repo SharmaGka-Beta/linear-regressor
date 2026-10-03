@@ -146,6 +146,21 @@ void Gui::ready(){
     ImGui::Begin("Ready");
 
     if(ImGui::Button("Start Training")){
+
+        scalerX = make_unique<Scaler>();
+        scalerY = make_unique<Scaler>();
+        model = make_unique<Model>((int)X[0].size());
+        loss = make_unique<MSELoss>();
+        optimizer = make_unique<SGDOptimizer>(0.01);
+        trainer = make_unique<Trainer>(*model, *loss, *optimizer);
+
+
+        scalerX -> fit(X);
+        scalerY -> fit(Y);
+
+        scaledX = scalerX -> transform(X);
+        scaledY = scalerY -> transform(Y);
+
         state = GuiState::Training;
     }
 
@@ -170,4 +185,10 @@ void Gui::ready(){
         ImGui::Text("Plot availible only for 2D regression :(");
     }
     ImGui::End();
+}
+
+void Gui::train(){
+
+    ImGui::Begin("Training");
+
 }
