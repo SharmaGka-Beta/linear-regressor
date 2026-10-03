@@ -12,10 +12,6 @@ set(CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY OFF)
 set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
 set(SFML_STATIC_LIBRARIES OFF CACHE BOOL "" FORCE)
 
-# set(BUILD_SHARED_LIBS ON)
-# set(SFML_BUILD_SHARED_LIBS ON)
-# set(SFML_STATIC_LIBRARIES OFF)
-
 include(FetchContent)
 
 FetchContent_Declare(
@@ -27,7 +23,6 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(SFML)
-# set(SFML_DIR "${sfml_BINARY_DIR}")
 
 FetchContent_Declare(
     ImGui
