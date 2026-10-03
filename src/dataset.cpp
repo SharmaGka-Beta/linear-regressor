@@ -101,6 +101,10 @@ void Dataset::setDataset(string fileName){
     file.close();
 }
 
+vector<string>& Dataset::getHeaders(){
+    return headers;
+}
+
 void Dataset::printDataset(){
 
     int sz = dataset.size();

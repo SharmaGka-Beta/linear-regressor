@@ -1,5 +1,6 @@
 #include "gui.h"
 #include "dataset.h"
+#include "exceptions.h"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -9,6 +10,11 @@
 #include <implot.h>
 #include <ImGuiFileDialog.h>
 #include <iostream>
+#include <vector>
+#include <string>
+#include <memory>
+
+using namespace std;
 
 void Gui::run(){
     sf::RenderWindow window(sf::VideoMode({1200, 800}), "SFML - Linear Regressor");
@@ -47,8 +53,11 @@ void Gui::run(){
 
 void Gui::renderState(){
 
-    if (state == 0){
+    if (state == GuiState::FileLoading){
         loadFile();
+    }
+    else if(state == GuiState::TargetSelection){
+        selectTarget();
     }
 }
 
@@ -84,14 +93,43 @@ void Gui::loadFile(){
             dataset = make_unique<Dataset>(fileName);
 
             if (dataset -> hasHeaders(fileName)){
-                state = 1;
+                state = GuiState::TargetSelection;
             }
             else{
                 targetColumn = dataset -> getColumnCount() - 1;
+                state = GuiState::Ready;
             }
         }
-        catch(...){
-            
+        catch(const CustomException& exc){
+            cout << exc.what() << endl;
         }
     }
 }
+
+void Gui::selectTarget(){
+    vector<string>& headers = dataset -> getHeaders();
+
+    ImGui::Begin("Select Target");
+
+    if (ImGui::BeginCombo("Target", headers[targetColumn].c_str())){
+        for(int i = 0; i < (int)headers.size(); i++){
+
+            bool isSelected = (i == targetColumn);
+
+            if (ImGui::Selectable(headers[i].c_str(), isSelected)) {
+                targetColumn = i;
+            }
+
+            if(isSelected){
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+
+    if(ImGui::Button("Ok")){
+        state = GuiState::Ready;
+    }
+    ImGui::End();
+}
+

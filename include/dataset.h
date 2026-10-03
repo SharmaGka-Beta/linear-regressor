@@ -23,6 +23,7 @@ class Dataset{
 
         bool hasHeaders(string);
         int getColumnCount();
+        vector<string>& getHeaders();
 
         vector<vector<double>> getFeatures(string);
         vector <double> getTargets(string);
