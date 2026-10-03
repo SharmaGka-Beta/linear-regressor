@@ -21,4 +21,7 @@ class Dataset{
 
         void setDataset(string);
         void printDataset();
+
+        vector<vector<double>> getFeatures(string);
+        vector <double> getTargets(string);
 };
