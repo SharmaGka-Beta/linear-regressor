@@ -12,15 +12,17 @@ class Dataset{
         vector<vector<double>> dataset;
         vector <string> headers;
 
-        bool hasHeaders(string);
         int getTargetIndex(string name);
-
-    public:
-
+        
+        public:
+        
         Dataset(string);
-
+        
         void setDataset(string);
         void printDataset();
+
+        bool hasHeaders(string);
+        int getColumnCount();
 
         vector<vector<double>> getFeatures(string);
         vector <double> getTargets(string);

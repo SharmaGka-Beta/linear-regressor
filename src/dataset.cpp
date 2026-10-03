@@ -41,6 +41,10 @@ bool Dataset::hasHeaders(string fileName){
     }
 }
 
+int Dataset::getColumnCount(){
+    return (int)dataset[0].size();
+}
+
 int Dataset::getTargetIndex(string name){
     for(int i = 0; i < (int)headers.size(); i++){
         if (headers[i] == name){
