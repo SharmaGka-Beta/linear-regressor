@@ -26,5 +26,9 @@ class Dataset{
         vector<string>& getHeaders();
 
         vector<vector<double>> getFeatures(string);
+        vector<vector<double>> getFeatures(int);
+
         vector <double> getTargets(string);
+        vector <double> getTargets(int);
+
 };

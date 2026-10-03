@@ -142,9 +142,37 @@ vector<vector<double>> Dataset::getFeatures(string name){
     return X;
 }
 
+vector<vector<double>> Dataset::getFeatures(int targetIndex){
+
+    vector<vector<double>>X;
+
+    for(auto& row: dataset){
+        vector<double> temp;
+        for(int i = 0; i < (int)row.size(); i++){
+            if (i != targetIndex){
+                temp.push_back(row[i]);
+            }
+        }
+        X.push_back(temp);
+    }
+
+    return X;
+}
+
 vector <double> Dataset::getTargets(string name){
     int targetIndex = getTargetIndex(name);
 
+    vector <double> Y;
+
+    for(auto& row: dataset){
+        Y.push_back(row[targetIndex]);
+    }
+
+    return Y;
+}
+
+vector <double> Dataset::getTargets(int targetIndex){
+    
     vector <double> Y;
 
     for(auto& row: dataset){

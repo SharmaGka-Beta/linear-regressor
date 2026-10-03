@@ -20,6 +20,7 @@ void Gui::run(){
     sf::RenderWindow window(sf::VideoMode({1200, 800}), "SFML - Linear Regressor");
 
     (void)ImGui::SFML::Init(window);
+    ImPlot::CreateContext();
 
     window.setFramerateLimit(60);
 
@@ -59,6 +60,9 @@ void Gui::renderState(){
     else if(state == GuiState::TargetSelection){
         selectTarget();
     }
+    else if(state == GuiState::Ready){
+        ready();
+    }
 }
 
 void Gui::loadFile(){
@@ -97,6 +101,8 @@ void Gui::loadFile(){
             }
             else{
                 targetColumn = dataset -> getColumnCount() - 1;
+                X = dataset -> getFeatures(targetColumn);
+                Y = dataset -> getTargets(targetColumn);
                 state = GuiState::Ready;
             }
         }
@@ -128,8 +134,40 @@ void Gui::selectTarget(){
     }
 
     if(ImGui::Button("Ok")){
+        X = dataset -> getFeatures(targetColumn);
+        Y = dataset -> getTargets(targetColumn);
         state = GuiState::Ready;
     }
     ImGui::End();
 }
 
+void Gui::ready(){
+
+    ImGui::Begin("Ready");
+
+    if(ImGui::Button("Start Training")){
+        state = GuiState::Training;
+    }
+
+    if(dataset -> getColumnCount() == 2){
+        vector <double> plot;
+        for(auto const& row: X){
+            plot.push_back(row[0]);
+        }
+
+        if (ImPlot::BeginPlot("Dataset")){
+            ImPlot::PlotScatter(
+                "Data",
+                plot.data(),
+                Y.data(),
+                static_cast<int>(Y.size())
+            );
+
+            ImPlot::EndPlot();
+        }
+    }
+    else{
+        ImGui::Text("Plot availible only for 2D regression :(");
+    }
+    ImGui::End();
+}
