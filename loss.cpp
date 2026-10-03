@@ -1,39 +1,29 @@
+#include "loss.h"
+
 #include <vector>
 
 using namespace std;
 
-class LossFunction{
+double MSELoss::computeLoss(vector <double>& predictions, vector <double>& actual){
 
-    public:
-        virtual double computeLoss(vector <double>&, vector <double>&) = 0; 
-        virtual vector <double> computeGradient(vector <double>& predictions, vector<double>& actual) = 0;
-        virtual ~LossFunction() = default;
-};
+    double loss = 0;
+    int sz = predictions.size();
 
-class MSELoss : public LossFunction{
+    for(int i = 0; i < sz; i++){
+        loss += (predictions[i] - actual[i]) * (predictions[i] - actual[i]);
+    }
 
-    public:
-        virtual double computeLoss(vector <double>& predictions, vector <double>& actual) override{
+    loss /= sz;
+    return loss;
+}
 
-            double loss = 0;
-            int sz = predictions.size();
+vector <double> MSELoss::computeGradient(vector <double>& predictions, vector<double>& actual){
 
-            for(int i = 0; i < sz; i++){
-                loss += (predictions[i] - actual[i]) * (predictions[i] - actual[i]);
-            }
+    int sz = predictions.size();
+    vector <double> gradients(sz, 0.0);
+    for(int i = 0; i < sz; i++){
+        gradients[i] = 2.0 * (predictions[i] - actual[i]) / sz;
+    }
 
-            loss /= sz;
-            return loss;
-        }
-
-        virtual vector <double> computeGradient(vector <double>& predictions, vector<double>& actual) override{
-
-            int sz = predictions.size();
-            vector <double> gradients(sz, 0.0);
-            for(int i = 0; i < sz; i++){
-                gradients[i] = 2.0 * (predictions[i] - actual[i]) / sz;
-            }
-
-            return gradients;
-        }
-};
+    return gradients;
+}

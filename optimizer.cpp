@@ -1,31 +1,21 @@
 #include "model.h"
 #include <vector>
 
+#include "optimizer.h"
+
 using namespace std;
 
-class Optimizer{
-    public:
-        virtual void update(Model& model, vector<double>& weightGrads, double biasGrad) = 0;
-        virtual ~Optimizer() = default;
-};
 
-class SGDOptimizer : public Optimizer{
+SGDOptimizer::SGDOptimizer(double lr): learningRate(lr){}
+SGDOptimizer::SGDOptimizer() : learningRate(0.1){}
 
-    private:
-        double learningRate;
+void SGDOptimizer::update(Model& model, vector<double>& weightGrads, double biasGrad){
 
-    public:
-        SGDOptimizer(double lr): learningRate(lr){}
-        SGDOptimizer() : learningRate(0.1){}
+    vector<double> weights = model.getWeights();
 
-        void update(Model& model, vector<double>& weightGrads, double biasGrad){
-
-            vector<double> weights = model.getWeights();
-
-            for(int i = 0; i < (int)weightGrads.size(); i++){
-                weights[i] -= learningRate*weightGrads[i];
-            }
-            double bias = model.getBias() - learningRate*biasGrad;
-            model.setParams(weights, bias);
-        }
-};
+    for(int i = 0; i < (int)weightGrads.size(); i++){
+        weights[i] -= learningRate*weightGrads[i];
+    }
+    double bias = model.getBias() - learningRate*biasGrad;
+    model.setParams(weights, bias);
+}

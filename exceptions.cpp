@@ -1,17 +1,13 @@
 #include <exception>
 #include <string>
 
+#include "exceptions.h"
+
 using namespace std;
 
-class CustomException : public exception{
 
-    private:
-        string exc;
+CustomException::CustomException(string e) : exc(e){}
 
-    public:
-        CustomException(string e) : exc(e){}
-
-        const char* what() const noexcept override{
-            return exc.c_str();
-        }
-};
+const char* CustomException::what() const noexcept{
+    return exc.c_str();
+}

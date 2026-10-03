@@ -1,64 +1,58 @@
 #include <vector>
 #include "matrix.h"
 
+#include "model.h"
+
 using namespace std;
 
-class Model{
 
-    private:
-        vector<double> weights;
-        double bias;
+Model::Model(size_t size) : weights(size, 0.0), bias(0.0){}
 
-    public:
+vector <double> Model::predict(vector<vector<double>>& inputs){
 
-        Model(size_t size) : weights(size, 0.0), bias(0.0){}
+    vector <double> predictions;
 
-        vector <double> predict(vector<vector<double>>& inputs){
+    int sz = inputs.size();
 
-            vector <double> predictions;
+    for(int i = 0; i < sz; i++){
 
-            int sz = inputs.size();
+        vector<double> row1 = inputs[i];
+        double prediction = Matrix::dot(row1, weights) + bias;
+        predictions.push_back(prediction);
+    }
+    return predictions;
+}
 
-            for(int i = 0; i < sz; i++){
+void Model::setParams(vector<double>& newWeights, double newBias){
+    weights = newWeights;
+    bias = newBias;
+}
 
-                vector<double> row1 = inputs[i];
-                double prediction = Matrix::multiply(row1, weights) + bias;
-                predictions.push_back(prediction);
-            }
-            return predictions;
+vector<double> Model::getWeights(){
+    return weights;
+}
+
+double Model::getBias(){
+    return bias;
+}
+
+vector <double> Model::getWeightGrad(vector <double>& lossGradients, vector<vector<double>>& inputs){
+
+    vector <double> weightGrads((int)weights.size(), 0.0);
+
+    for(int i = 0; i < (int)lossGradients.size(); i++){
+        for (int j = 0; j < (int)weights.size(); j++) {        
+            weightGrads[j] += lossGradients[i] * inputs[i][j];
         }
+    }
+    return weightGrads;
+}
 
-        void setParams(vector<double>& newWeights, double newBias){
-            weights = newWeights;
-            bias = newBias;
-        }
+double Model::getBiasGrad(vector<double>& lossGradients){
 
-        vector<double> getWeights(){
-            return weights;
-        }
-
-        double getBias(){
-            return bias;
-        }
-
-        vector <double> getWeightGrad(vector <double>& lossGradients, vector<vector<double>>& inputs){
-
-            vector <double> weightGrads((int)weights.size(), 0.0);
-
-            for(int i = 0; i < (int)lossGradients.size(); i++){
-                for (int j = 0; j < (int)weights.size(); j++) {        
-                    weightGrads[j] += lossGradients[i] * inputs[i][j];
-                }
-            }
-            return weightGrads;
-        }
-
-        double getBiasGrad(vector<double>& lossGradients){
-
-            double biasGrad = 0.0;
-            for (double i : lossGradients){
-                biasGrad += i;
-            }
-            return biasGrad;
-        }
-};
+    double biasGrad = 0.0;
+    for (double i : lossGradients){
+        biasGrad += i;
+    }
+    return biasGrad;
+}

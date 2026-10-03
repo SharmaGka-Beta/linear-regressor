@@ -8,5 +8,5 @@ class Matrix{
 
     public:
 
-        static double multiply(vector<double>&, vector<double>&);
+        static double dot(vector<double>&, vector<double>&);
 };
