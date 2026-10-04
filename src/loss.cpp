@@ -61,3 +61,23 @@ vector<double> MAELoss::computeGradient(vector<double>& predictions, vector<doub
 
     return gradients;
 }
+
+double HuberLoss::computeLoss(vector <double>& predictions, vector <double>& actual){
+
+    double delta = 1.0;
+    int size = predictions.size();
+    double loss=0;
+
+    for(int i = 0; i < size; i++){
+        double error = fabs(predictions[i]-actual[i]);
+        
+        if(error<=delta){
+            loss=loss + (error*error)/2;
+        }
+        else{
+            loss = loss + (delta*(error - (delta/2)));
+        }
+    }
+    loss /= size;
+    return loss;
+}
