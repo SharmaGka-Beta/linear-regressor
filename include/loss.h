@@ -5,7 +5,7 @@
 
 using namespace std;
 
-const inline vector <string> losses = {"MSE"};
+const inline vector <string> losses = {"MSE", "MAE", "Huber"};
 
 class LossFunction{
 

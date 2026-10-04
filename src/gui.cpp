@@ -169,8 +169,6 @@ void Gui::ready(){
     ImGui::InputInt("Epochs", &epochs);
     ImGui::InputDouble("Learning Rate", &learningRate);
 
-    int selectedLoss = 0;
-    int selectedOptimizer = 0;
 
     if (ImGui::BeginCombo("Loss", losses[selectedLoss].c_str())){
         for(int i = 0; i < (int)losses.size(); i++){
@@ -212,6 +210,12 @@ void Gui::ready(){
 
         if (losses[selectedLoss] == "MSE"){
             loss = make_unique<MSELoss>();
+        }
+        else if(losses[selectedLoss] == "MAE"){
+            loss = make_unique<MAELoss>();
+        }
+        else if(losses[selectedLoss] == "Huber"){
+            loss = make_unique<HuberLoss>();
         }
         if (optimizers[selectedOptimizer] == "SGD"){
             optimizer = make_unique<SGDOptimizer>(learningRate);
@@ -423,6 +427,8 @@ void Gui::clearAll(){
     epochs = 100;
     learningRate = 0.01;
     showPreds = false;
+    selectedLoss = 0;
+    selectedOptimizer = 0;
 
     X.clear();
     Y.clear();

@@ -33,6 +33,8 @@ class Gui{
         int epochs = 100;
         double learningRate = 0.01;
         bool showPreds = false;
+        int selectedLoss = 0;
+        int selectedOptimizer = 0;
 
         vector<vector<double>> X;
         vector<double> Y;
