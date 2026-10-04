@@ -101,7 +101,13 @@ void Dataset::setDataset(string fileName){
             if (value.size() == 0){
                 throw CustomException("Invalid CSV file!");
             }
-            row.push_back(stod(value));
+            try{
+
+                row.push_back(stod(value));
+            }
+            catch(...){
+                throw CustomException("Invalid CSV file!");
+            }
         }
 
         dataset.push_back(row);
