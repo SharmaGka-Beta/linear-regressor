@@ -1,5 +1,10 @@
 #include "gui.h"
+#include "trainer.h"
+#include "model.h"
+#include "optimizer.h"
+#include "loss.h"
 #include "dataset.h"
+#include "scaler.h"
 #include "exceptions.h"
 
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -17,7 +22,7 @@
 using namespace std;
 
 void Gui::run(){
-    sf::RenderWindow window(sf::VideoMode({1200, 800}), "SFML - Linear Regressor");
+    sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML - Linear Regressor");
 
     (void)ImGui::SFML::Init(window);
     ImPlot::CreateContext();
@@ -157,13 +162,53 @@ void Gui::ready(){
     ImGui::InputInt("Epochs", &epochs);
     ImGui::InputDouble("Learning Rate", &learningRate);
 
+    int selectedLoss = 0;
+    int selectedOptimizer = 0;
+
+    if (ImGui::BeginCombo("Loss", losses[selectedLoss].c_str())){
+        for(int i = 0; i < (int)losses.size(); i++){
+
+            bool isSelected = (i == selectedLoss);
+
+            if (ImGui::Selectable(losses[i].c_str(), isSelected)) {
+                selectedLoss = i;
+            }
+
+            if(isSelected){
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+
+    if (ImGui::BeginCombo("Optimizer", optimizers[selectedOptimizer].c_str())){
+        for(int i = 0; i < (int)optimizers.size(); i++){
+
+            bool isSelected = (i == selectedOptimizer);
+
+            if (ImGui::Selectable(optimizers[i].c_str(), isSelected)) {
+                selectedOptimizer = i;
+            }
+
+            if(isSelected){
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+
     if(ImGui::Button("Start Training")){
 
         scalerX = make_unique<Scaler>();
         scalerY = make_unique<Scaler>();
         model = make_unique<Model>((int)X[0].size());
-        loss = make_unique<MSELoss>();
-        optimizer = make_unique<SGDOptimizer>(learningRate);
+
+        if (losses[selectedLoss] == "MSE"){
+            loss = make_unique<MSELoss>();
+        }
+        if (optimizers[selectedOptimizer] == "SGD"){
+            optimizer = make_unique<SGDOptimizer>(learningRate);
+        }
         trainer = make_unique<Trainer>(*model, *loss, *optimizer);
 
 
@@ -245,5 +290,9 @@ void Gui::training(){
     if(currentEpoch >= epochs){
         state = GuiState::Prediction;
     }
+}
+
+void Gui::prediction(){
+
 }
 

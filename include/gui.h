@@ -52,6 +52,7 @@ class Gui{
         void selectTarget();
         void ready();
         void training();
+        void prediction();
 
 
     public:

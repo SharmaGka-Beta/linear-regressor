@@ -1,8 +1,11 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 using namespace std;
+
+const inline vector <string> losses = {"MSE"};
 
 class LossFunction{
 
@@ -12,7 +15,7 @@ class LossFunction{
         virtual ~LossFunction() = default;
 };
 
-class MSELoss : virtual public LossFunction{
+class MSELoss : public LossFunction{
 
     public:
         virtual double computeLoss(vector <double>&, vector <double>&) override;

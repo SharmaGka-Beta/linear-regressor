@@ -3,6 +3,9 @@
 #include "model.h"
 
 #include <vector>
+#include <string>
+
+const inline vector <string> optimizers = {"SGD"};
 
 class Optimizer{
     public:
