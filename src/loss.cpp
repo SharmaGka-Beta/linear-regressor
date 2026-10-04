@@ -69,15 +69,29 @@ double HuberLoss::computeLoss(vector <double>& predictions, vector <double>& act
     double loss=0;
 
     for(int i = 0; i < size; i++){
-        double error = fabs(predictions[i]-actual[i]);
+        double error = predictions[i]-actual[i];
         
-        if(error<=delta){
+        if(fabs(error)<=delta){
             loss=loss + (error*error)/2;
         }
         else{
-            loss = loss + (delta*(error - (delta/2)));
+            loss = loss + (delta*(fabs(error) - (delta/2)));
         }
     }
     loss /= size;
     return loss;
+}
+
+vector<double> HuberLoss::computeGradient(vector<double>& predictions, vector<double>& actual){
+
+    int size = predictions.size();
+    vector<double> gradients(size, 0.0);
+    double delta = 1.0;
+
+    for(int i = 0; i < size; i++){
+        double error = fabs(predictions[i]-actual[i]);
+
+    }
+
+    return gradients;
 }
