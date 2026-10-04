@@ -47,10 +47,8 @@ class AdamOptimizer : public Optimizer{
         double beta1;
         double beta2;
         double epsilon;
-
         vector<double> m;
         vector<double> v;
-
         double biasM;
         double biasV;
 
