@@ -1,6 +1,7 @@
 #include "loss.h"
 
 #include <vector>
+#include <cmath>
 
 using namespace std;
 
@@ -27,3 +28,18 @@ vector <double> MSELoss::computeGradient(vector <double>& predictions, vector<do
 
     return gradients;
 }
+
+double MAELoss::computeLoss(vector <double>& predictions, vector <double>& actual){
+
+    double loss = 0;
+    int size = predictions.size();
+
+    for(int i = 0; i < size; i++){
+        loss += fabs((predictions[i] - actual[i]));
+    }
+
+    loss /= size;
+    return loss;
+}
+
+
