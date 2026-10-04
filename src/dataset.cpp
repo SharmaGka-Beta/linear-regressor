@@ -76,6 +76,9 @@ void Dataset::setDataset(string fileName){
         string value;
 
         while(getline(lineStream, value, ',')){
+            if (value.size() == 0){
+                throw CustomException("Invalid CSV file!");
+            }
             headers.push_back(value);
         }
     }
@@ -95,6 +98,9 @@ void Dataset::setDataset(string fileName){
         vector <double> row;
 
         while(getline(lineStream, value, ',')){
+            if (value.size() == 0){
+                throw CustomException("Invalid CSV file!");
+            }
             row.push_back(stod(value));
         }
 

@@ -38,7 +38,11 @@ void Gui::run(){
             ImGui::SFML::ProcessEvent(window, *event);
             if (event -> is <sf::Event::Closed>()){
                 window.close();
-            }   
+            }
+            else if (const auto* resized = event->getIf<sf::Event::Resized>()){
+                sf::FloatRect visibleArea({0.f, 0.f}, {static_cast<float>(resized->size.x), static_cast<float>(resized->size.y)});
+                window.setView(sf::View(visibleArea));
+            }
         }
 
         ImGui::SFML::Update(
@@ -54,6 +58,7 @@ void Gui::run(){
 
         window.display();
     }
+    ImPlot::DestroyContext();
     ImGui::SFML::Shutdown();
 }
 
@@ -91,12 +96,14 @@ void Gui::loadFile(){
             config
         );
     }
-    ImGui::End();
-
+    if (showExcep){
+        ImGui::Text("%s", excMessage.c_str());
+    }
     if (ImGuiFileDialog::Instance()->Display("ChooseCSV")){
         if (!(ImGuiFileDialog::Instance()->IsOk())){
 
             ImGuiFileDialog::Instance()->Close();
+            ImGui::End();
             return;
 
         }
@@ -108,6 +115,7 @@ void Gui::loadFile(){
             dataset = make_unique<Dataset>(fileName);
 
             if ((dataset -> getHeaders()).size() > 0){
+                showExcep = false;
                 state = GuiState::TargetSelection;
             }
             else{
@@ -117,17 +125,21 @@ void Gui::loadFile(){
                 for(auto const& row: X){
                     plotX.push_back(row[0]);
                 }
+                showExcep = false;
                 state = GuiState::Ready;
             }
         }
         catch(const CustomException& exc){
-            cout << exc.what() << endl;
+            showExcep = true;
+            excMessage = exc.what();
         }
     }
+    ImGui::End();
 }
 
 void Gui::selectTarget(){
     vector<string>& headers = dataset -> getHeaders();
+
 
     ImGui::Begin("Select Target");
 
@@ -157,7 +169,9 @@ void Gui::selectTarget(){
     }
 
     if (ImGui::Button("Restart")){
+        ImGui::End();
         clearAll();
+        return;
     }
     ImGui::End();
 }
@@ -202,6 +216,10 @@ void Gui::ready(){
         ImGui::EndCombo();
     }
 
+    if (showExcep){
+        ImGui::Text("%s", excMessage.c_str());
+    }
+
     if(ImGui::Button("Start Training")){
 
         scalerX = make_unique<Scaler>();
@@ -222,17 +240,33 @@ void Gui::ready(){
         }
         trainer = make_unique<Trainer>(*model, *loss, *optimizer);
 
+        try{
 
-        scalerX -> fit(X);
-        scalerY -> fit(Y);
+            scalerX -> fit(X);
+            scalerY -> fit(Y);
+            
+            scaledX = scalerX -> transform(X);
+            scaledY = scalerY -> transform(Y);
+            currentEpoch = 0;
+            currentLoss = 0;
+            showExcep = false;
+            excMessage.clear();
 
-        currentEpoch = 0;
-        currentLoss = 0;
+            state = GuiState::Training;
+            
+        }
+        catch(const CustomException& excep){
+            showExcep = true;
+            excMessage = excep.what();
+            
+        }
 
-        scaledX = scalerX -> transform(X);
-        scaledY = scalerY -> transform(Y);
+    }
 
-        state = GuiState::Training;
+    if (ImGui::Button("Restart")){
+        ImGui::End();
+        clearAll();
+        return;
     }
 
     if(dataset -> getColumnCount() == 2){
@@ -250,10 +284,6 @@ void Gui::ready(){
     }
     else{
         ImGui::Text("Plot available only for 2D regression :(");
-    }
-
-    if (ImGui::Button("Restart")){
-        clearAll();
     }
     ImGui::End();
 }
@@ -273,6 +303,12 @@ void Gui::training(){
 
     vector <double> predictions = model -> predict(scaledX);
     vector <double> real = scalerY -> invert(predictions);
+
+    if (ImGui::Button("Restart")){
+        ImGui::End();
+        clearAll();
+        return;
+    }
 
     if (dataset -> getColumnCount() == 2){
         if (ImPlot::BeginPlot("Regression")){
@@ -299,9 +335,6 @@ void Gui::training(){
         ImGui::Text("Plot available only for 2D regression :(");
     }
 
-    if (ImGui::Button("Restart")){
-        clearAll();
-    }
 
     ImGui::End();
 
@@ -367,6 +400,11 @@ void Gui::prediction(){
         index++;
     }
 
+    if(showPreds){
+        vector <string> headers = dataset -> getHeaders();
+        ImGui::Text("%s: %f", headers[targetColumn].c_str(), preds[0]);
+    }
+
     if (ImGui::Button("Predict")){
 
         vector<vector<double>> scaledInputs = (*scalerX).transform(inputs);
@@ -375,12 +413,12 @@ void Gui::prediction(){
         showPreds = true;
     
     }
-    if(showPreds){
 
-        vector <string> headers = dataset -> getHeaders();
-        ImGui::Text("%s: %f", headers[targetColumn].c_str(), preds[0]);
+    if (ImGui::Button("Restart")){
+        ImGui::End();
+        clearAll();
+        return;
     }
-
     if (dataset -> getColumnCount() == 2){
 
         vector <double> predictions = model -> predict(scaledX);
@@ -410,10 +448,6 @@ void Gui::prediction(){
         ImGui::Text("Plot available only for 2D regression :(");
     }
 
-    if (ImGui::Button("Restart")){
-        clearAll();
-    }
-
     ImGui::End();
 }
 
@@ -429,6 +463,8 @@ void Gui::clearAll(){
     showPreds = false;
     selectedLoss = 0;
     selectedOptimizer = 0;
+    showExcep = false;
+    excMessage.clear();
 
     X.clear();
     Y.clear();

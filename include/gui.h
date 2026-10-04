@@ -6,6 +6,7 @@
 #include "loss.h"
 #include "dataset.h"
 #include "scaler.h"
+#include "exceptions.h"
 
 #include <vector>
 #include <string>
@@ -35,6 +36,8 @@ class Gui{
         bool showPreds = false;
         int selectedLoss = 0;
         int selectedOptimizer = 0;
+        bool showExcep = false;
+        string excMessage;
 
         vector<vector<double>> X;
         vector<double> Y;
