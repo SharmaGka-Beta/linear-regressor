@@ -42,4 +42,22 @@ double MAELoss::computeLoss(vector <double>& predictions, vector <double>& actua
     return loss;
 }
 
+vector<double> MAELoss::computeGradient(vector<double>& predictions, vector<double>& actual){
 
+    int size = predictions.size();
+    vector<double> gradients(size, 0.0);
+
+    for(int i = 0; i < size; i++){
+        if(predictions[i] > actual[i]){
+            gradients[i] = 1.0 / size;
+        }
+        else if(predictions[i] < actual[i]){
+            gradients[i] = -1.0 / size;
+        }
+        else{
+            gradients[i] = 0.0;
+        }
+    }
+
+    return gradients;
+}
