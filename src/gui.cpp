@@ -238,6 +238,12 @@ void Gui::ready(){
         if (optimizers[selectedOptimizer] == "SGD"){
             optimizer = make_unique<SGDOptimizer>(learningRate);
         }
+        else if(optimizers[selectedOptimizer] == "Momentum"){
+            optimizer = make_unique<MomentumOptimizer>(learningRate);
+        }
+        else if(optimizers[selectedOptimizer] == "Adam"){
+            optimizer = make_unique<AdamOptimizer>(learningRate);
+        }
         trainer = make_unique<Trainer>(*model, *loss, *optimizer);
 
         try{

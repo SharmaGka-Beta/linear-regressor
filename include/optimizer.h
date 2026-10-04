@@ -36,6 +36,7 @@ class MomentumOptimizer : public Optimizer{
     public:
         MomentumOptimizer(double, double);
         MomentumOptimizer();
+        MomentumOptimizer(double);
 
         void update(Model&, vector<double>&, double) override;
 };
@@ -57,6 +58,7 @@ class AdamOptimizer : public Optimizer{
     public:
         AdamOptimizer(double, double, double, double);
         AdamOptimizer();
+        AdamOptimizer(double);
 
         void update(Model&, vector<double>&, double) override;
 };

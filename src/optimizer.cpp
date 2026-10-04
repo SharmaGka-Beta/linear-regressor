@@ -23,6 +23,8 @@ void SGDOptimizer::update(Model& model, vector<double>& weightGrads, double bias
 
 MomentumOptimizer::MomentumOptimizer(double lr, double b) : learningRate(lr), beta(b), biasVelocity(0.0){}
 MomentumOptimizer::MomentumOptimizer(): learningRate(0.01), beta(0.9), biasVelocity(0.0){}
+MomentumOptimizer::MomentumOptimizer(double lr): learningRate(lr), beta(0.9), biasVelocity(0.0){}
+
 
 void MomentumOptimizer::update(Model& model, vector<double>& weightGrads, double biasGrad){
 
@@ -48,6 +50,16 @@ AdamOptimizer::AdamOptimizer(double lr, double b1, double b2, double eps)
       beta1(b1),
       beta2(b2),
       epsilon(eps),
+      biasM(0.0),
+      biasV(0.0),
+      timestep(0)
+{}
+
+AdamOptimizer::AdamOptimizer(double lr)
+    : learningRate(lr),
+      beta1(0.9),
+      beta2(0.999),
+      epsilon(1e-8),
       biasM(0.0),
       biasV(0.0),
       timestep(0)
