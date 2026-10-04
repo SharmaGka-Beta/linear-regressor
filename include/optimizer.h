@@ -40,4 +40,25 @@ class MomentumOptimizer : public Optimizer{
         void update(Model&, vector<double>&, double) override;
 };
 
+class AdamOptimizer : public Optimizer{
 
+    private:
+        double learningRate;
+        double beta1;
+        double beta2;
+        double epsilon;
+
+        vector<double> m;
+        vector<double> v;
+
+        double biasM;
+        double biasV;
+
+        int timestep;
+
+    public:
+        AdamOptimizer(double, double, double, double);
+        AdamOptimizer();
+
+        void update(Model&, vector<double>&, double) override;
+};
