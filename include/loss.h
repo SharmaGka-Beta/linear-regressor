@@ -16,14 +16,14 @@ class MSELoss : virtual public LossFunction{
 
     public:
         virtual double computeLoss(vector <double>&, vector <double>&) override;
-        virtual vector <double> computeGradient(vector <double>&, vector<double>&);
+        virtual vector <double> computeGradient(vector <double>&, vector<double>&) override;
 };
 
 class MAELoss : virtual public LossFunction{
 
     public:
         virtual double computeLoss(vector <double>&, vector <double>&) override;
-        virtual vector <double> computeGradient(vector <double>&, vector<double>&);
+        virtual vector <double> computeGradient(vector <double>&, vector<double>&) override;
 };
 
 class HuberLoss : virtual public LossFunction{
