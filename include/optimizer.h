@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-const inline vector <string> optimizers = {"SGD"};
+const inline vector<string> optimizers = {"SGD", "Momentum", "Adam"};
 
 class Optimizer{
     public:
@@ -24,3 +24,20 @@ class SGDOptimizer : public Optimizer{
 
         void update(Model&, vector<double>&, double);
 };
+
+class MomentumOptimizer : public Optimizer{
+
+    private:
+        double learningRate;
+        double beta;
+        vector<double> velocity;
+        double biasVelocity;
+
+    public:
+        MomentumOptimizer(double, double);
+        MomentumOptimizer();
+
+        void update(Model&, vector<double>&, double) override;
+};
+
+
