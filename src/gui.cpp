@@ -71,6 +71,9 @@ void Gui::renderState(){
     else if(state == GuiState::Training){
         training();
     }
+    else if(state == GuiState::Prediction){
+        prediction();
+    }
 }
 
 void Gui::loadFile(){
@@ -104,7 +107,7 @@ void Gui::loadFile(){
         try{
             dataset = make_unique<Dataset>(fileName);
 
-            if (dataset -> hasHeaders(fileName)){
+            if ((dataset -> getHeaders()).size() > 0){
                 state = GuiState::TargetSelection;
             }
             else{
@@ -151,6 +154,10 @@ void Gui::selectTarget(){
             plotX.push_back(row[0]);
         }
         state = GuiState::Ready;
+    }
+
+    if (ImGui::Button("Restart")){
+        clearAll();
     }
     ImGui::End();
 }
@@ -240,6 +247,10 @@ void Gui::ready(){
     else{
         ImGui::Text("Plot available only for 2D regression :(");
     }
+
+    if (ImGui::Button("Restart")){
+        clearAll();
+    }
     ImGui::End();
 }
 
@@ -259,8 +270,7 @@ void Gui::training(){
     vector <double> predictions = model -> predict(scaledX);
     vector <double> real = scalerY -> invert(predictions);
 
-    if (dataset -> getColumnCount() == 2)
-    {
+    if (dataset -> getColumnCount() == 2){
         if (ImPlot::BeginPlot("Regression")){
 
             ImPlot::PlotScatter(
@@ -285,14 +295,152 @@ void Gui::training(){
         ImGui::Text("Plot available only for 2D regression :(");
     }
 
+    if (ImGui::Button("Restart")){
+        clearAll();
+    }
+
     ImGui::End();
 
     if(currentEpoch >= epochs){
+
+        inputs = vector<vector<double>>(1, vector<double>(X[0].size(), 0.0));
+
+        vector <double> weights = model -> getWeights();
+        double bias = model -> getBias();
+
+        const vector<double>& meanX = scalerX -> getMean();
+        double meanY = (scalerY -> getMean())[0];
+
+        const vector<double>& sigmaX = scalerX -> getSigma();
+        double sigmaY = (scalerY -> getSigma())[0];
+
+        finalWeights.resize(weights.size());
+
+        for (int i = 0; i < (int)weights.size(); i++){
+            finalWeights[i] = weights[i] * sigmaY / sigmaX[i];
+        }
+
+        finalBias = meanY + sigmaY * bias;
+        for (int i = 0; i < static_cast<int>(finalWeights.size()); ++i){
+            finalBias -= finalWeights[i] * meanX[i];
+        }
+
+
         state = GuiState::Prediction;
     }
 }
 
 void Gui::prediction(){
+    
+    ImGui::Begin("Predictions");
+    vector <string> headers = dataset -> getHeaders();
 
+    ImGui::Text("Loss: %f", currentLoss);
+
+    ImGui::Text("%s = ", headers[targetColumn].c_str());
+
+    ImGui::SameLine();
+
+    int index = 0;
+    for(int i = 0; i < (int)headers.size(); i++){
+        if (i == targetColumn){
+            continue;
+        }
+        ImGui::Text("(%f * %s) + ", finalWeights[index], headers[i].c_str());
+        ImGui::SameLine();
+        index++;
+    }
+
+    ImGui::Text("(%f)", finalBias);
+    
+    index = 0;
+
+    for(int i = 0; i < (int)headers.size(); i++){
+        if (i == targetColumn){
+            continue;
+        }
+        ImGui::InputDouble(headers[i].c_str(), &inputs[0][index]);
+        index++;
+    }
+
+    if (ImGui::Button("Predict")){
+
+        vector<vector<double>> scaledInputs = (*scalerX).transform(inputs);
+        vector<double> scaledPred = (*model).predict(scaledInputs);
+        preds = (*scalerY).invert(scaledPred);
+        showPreds = true;
+    
+    }
+    if(showPreds){
+
+        vector <string> headers = dataset -> getHeaders();
+        ImGui::Text("%s: %f", headers[targetColumn].c_str(), preds[0]);
+    }
+
+    if (dataset -> getColumnCount() == 2){
+
+        vector <double> predictions = model -> predict(scaledX);
+        vector <double> real = scalerY -> invert(predictions);
+
+        if (ImPlot::BeginPlot("Regression")){
+
+            ImPlot::PlotScatter(
+                "Data",
+                plotX.data(),
+                Y.data(),
+                static_cast<int>(plotX.size())
+            );
+
+            ImPlot::PlotLine(
+                "Regression",
+                plotX.data(),
+                real.data(),
+                static_cast<int>(plotX.size())
+            );
+            
+
+            ImPlot::EndPlot();
+        }
+    }
+    else{
+        ImGui::Text("Plot available only for 2D regression :(");
+    }
+
+    if (ImGui::Button("Restart")){
+        clearAll();
+    }
+
+    ImGui::End();
+}
+
+void Gui::clearAll(){
+
+    state = GuiState::FileLoading;
+    fileName.clear();
+    targetColumn = 0;
+    currentEpoch = 0;
+    currentLoss = 0;
+    epochs = 100;
+    learningRate = 0.01;
+    showPreds = false;
+
+    X.clear();
+    Y.clear();
+    scaledX.clear();
+    scaledY.clear();
+    plotX.clear();
+    inputs.clear();
+    preds.clear();
+
+    finalWeights.clear();
+    finalBias = 0;
+
+    dataset.reset();
+    scalerX.reset();
+    scalerY.reset();
+    model.reset();
+    loss.reset();
+    optimizer.reset();
+    trainer.reset();
 }
 

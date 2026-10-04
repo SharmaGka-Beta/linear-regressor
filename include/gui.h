@@ -32,12 +32,18 @@ class Gui{
         double currentLoss = 0;
         int epochs = 100;
         double learningRate = 0.01;
+        bool showPreds = false;
 
         vector<vector<double>> X;
         vector<double> Y;
         vector<vector<double>> scaledX;
         vector<double> scaledY;
         vector <double> plotX;
+        vector <vector<double>> inputs{};
+        vector<double> preds{};
+
+        vector<double> finalWeights;
+        double finalBias;
 
         unique_ptr<Dataset> dataset;
         unique_ptr<Scaler> scalerX;
@@ -53,6 +59,7 @@ class Gui{
         void ready();
         void training();
         void prediction();
+        void clearAll();
 
 
     public:

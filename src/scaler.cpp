@@ -104,3 +104,10 @@ vector<double> Scaler::invert(vector<double>& scaled){
     }
     return temp;
 }
+
+vector<double> Scaler::getMean(){
+    return mean;
+}
+vector<double> Scaler::getSigma(){
+    return sigma;
+}

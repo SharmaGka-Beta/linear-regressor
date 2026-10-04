@@ -20,5 +20,8 @@ class Scaler{
         vector<double> transform(vector<double>&);
 
         vector<double> invert(vector<double>&);
+
+        vector<double>getMean();
+        vector<double>getSigma();
 };
 

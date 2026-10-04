@@ -79,6 +79,9 @@ void Dataset::setDataset(string fileName){
             headers.push_back(value);
         }
     }
+    else{
+        doesHaveHeaders = false;
+    }
 
     while(getline(file, line)){
 
@@ -98,6 +101,11 @@ void Dataset::setDataset(string fileName){
         dataset.push_back(row);
     }
 
+    if (!doesHaveHeaders){
+        for(int i = 0; i < dataset[0].size(); i++){
+            headers.push_back("col" + to_string(i));
+        }
+    }
     file.close();
 }
 
